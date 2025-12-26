@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư Mời Sinh Nhật - Nguyễn Tuấn</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* CSS Reset và biến toàn cục */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --light-gold: #FFD700;
+            --dark-bg: #0A0A0A;
+            --card-bg: #121212;
+            --text-light: #F5F5F5;
+            --text-gray: #AAAAAA;
+            --shadow-color: rgba(212, 175, 55, 0.15);
+            --success: #28a745;
+            --error: #dc3545;
+            --modal-bg: rgba(10, 10, 10, 0.95);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 20%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Hiệu ứng ánh sáng nền */
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .light-effect {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+        }
+
+        .light-effect:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation: float 25s infinite linear;
+        }
+
+        .light-effect:nth-child(2) {
+            bottom: 10%;
+            right: 10%;
+            animation: float 30s infinite linear reverse;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(100px, 100px) rotate(360deg);
+            }
+        }
+
+        /* Container chính */
+        .card-container {
+            width: 100%;
+            max-width: 900px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            animation-delay: 0.3s;
+            z-index: 10;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Thiệp chính */
+        .birthday-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(212, 175, 55, 0.1),
+                inset 0 0 30px rgba(212, 175, 55, 0.05);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Phần header với hình ảnh và tiêu đề */
+        .card-header {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(30, 30, 30, 0.9));
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--light-gold), var(--gold));
+        }
+
+        .birthday-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+
+        .birthday-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            margin-top: 5px;
+        }
+
+        /* Phần nội dung chính */
+        .card-content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        @media (min-width: 768px) {
+            .card-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Phần thông tin sự kiện */
+        .event-info {
+            background: rgba(30, 30, 30, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            flex-shrink: 0;
+            color: var(--gold);
+            font-size: 1.4rem;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .info-text h3 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-gray);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-text p {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        /* Phần đồng hồ đếm ngược */
+        .countdown-container {
+            background: rgba(30, 30, 30, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .countdown {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .countdown-item {
+            text-align: center;
+            padding: 20px 15px;
+            background: rgba(40, 40, 40, 0.7);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .countdown-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+
+        .countdown-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .countdown-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Phần nút tương tác */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 40px;
+            padding: 0 40px 40px;
+        }
+
+        @media (min-width: 640px) {
+            .action-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .btn {
+            padding: 18px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: #000;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(40, 40, 40, 0.8);
+            color: var(--text-light);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #1e7e34);
+            color: white;
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--gold);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal nhập thông tin */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Phần footer */
+        .card-footer {
+            text-align: center;
+            padding: 25px 40px;
+            background: rgba(20, 20, 20, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-text {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Hiệu ứng pháo hoa */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-content {
+                padding: 25px;
+                gap: 25px;
+            }
+
+            .birthday-title {
+                font-size: 3rem;
+            }
+
+            .section-title {
+                font-size: 1.9rem;
+            }
+
+            .countdown-number {
+                font-size: 2.2rem;
+            }
+
+            .action-buttons {
+                padding: 0 25px 25px;
+            }
+
+            .modal {
+                padding: 30px 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-header {
+                padding: 30px 20px 25px;
+            }
+
+            .birthday-title {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+
+            .event-info,
+            .countdown-container {
+                padding: 20px;
+            }
+
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-icon {
+                margin-bottom: 12px;
+            }
+
+            .btn {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hiệu ứng ánh sáng nền -->
+    <div class="background-effects">
+        <div class="light-effect"></div>
+        <div class="light-effect"></div>
+    </div>
+
+    <!-- Container chính -->
+    <div class="card-container">
+        <div class="birthday-card">
+            <!-- Phần header -->
+            <div class="card-header">
+                <h1 class="birthday-title">Birthday Party</h1>
+                <p class="subtitle">Thư mời đặc biệt</p>
+            </div>
+
+            <!-- Phần nội dung chính -->
+            <div class="card-content">
+                <!-- Thông tin sự kiện -->
+                <div class="event-info">
+                    <h2 class="section-title">Thông tin chi tiết</h2>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Chủ nhân buổi tiệc</h3>
+                            <p>Nguyễn Tuấn</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="far fa-clock"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Thời gian</h3>
+                            <p>16:00, Thứ Sáu, 26/12/2025</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Địa điểm</h3>
+                            <p>Biệt thự số 12, Đường Lê Lợi, Quận 1, TP.HCM</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-glass-cheers"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Ghi chú</h3>
+                            <p>Vui lòng đến đúng giờ. Trang phục: Lịch sự</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Đồng hồ đếm ngược -->
+                <div class="countdown-container">
+                    <h2 class="section-title">Đếm ngược đến sự kiện</h2>
+                    <div class="countdown">
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="days">00</div>
+                            <div class="countdown-label">Ngày</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="hours">00</div>
+                            <div class="countdown-label">Giờ</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="minutes">00</div>
+                            <div class="countdown-label">Phút</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="seconds">00</div>
+                            <div class="countdown-label">Giây</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Các nút tương tác -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="confirmBtn">
+                    <i class="fas fa-check-circle btn-icon"></i>
+                    Xác nhận tham gia
+                </button>
+
+                <a href="https://goo.gl/maps/search/Bi%E1%BB%87t+th%E1%BB%B1+s%E1%BB%91+12,+%C4%90%C6%B0%E1%BB%9Dng+L%C3%AA+L%E1%BB%A3i,+Qu%E1%BA%ADn+1,+TP.HCM/@10.7769,106.7009,17z"
+                    target="_blank" class="btn btn-secondary" id="mapBtn">
+                    <i class="fas fa-map-marked-alt btn-icon"></i>
+                    Xem bản đồ
+                </a>
+
+                <a href="https://zalo.me/84901234567" target="_blank" class="btn btn-secondary" id="messageBtn">
+                    <i class="fas fa-comment-dots btn-icon"></i>
+                    Nhắn tin cho Tuấn
+                </a>
+            </div>
+
+            <!-- Phần footer -->
+            <div class="card-footer">
+                <p class="footer-text">
+                    Sự hiện diện của bạn là niềm vinh hạnh của tôi.<br>
+                    Vui lòng xác nhận tham gia trước ngày <span class="highlight">20/12/2025</span>.
+                </p>
+                <p class="footer-text" style="margin-top: 10px; font-size: 0.9rem; color: var(--gold);">
+                    <i class="fas fa-cloud-upload-alt"></i> Dữ liệu được lưu trực tiếp vào Google Sheets
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal nhập thông tin -->
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal">
+            <h2 class="modal-title">Thông tin khách mời</h2>
+            <form id="guestForm">
+                <div class="form-group">
+                    <label class="form-label" for="guestName">Họ và tên *</label>
+                    <input type="text" id="guestName" class="form-input" required placeholder="Nhập họ và tên của bạn">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="guestPhone">Số điện thoại *</label>
+                    <input type="tel" id="guestPhone" class="form-input" required placeholder="Nhập số điện thoại">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="guestEmail">Email</label>
+                    <input type="email" id="guestEmail" class="form-input" placeholder="Nhập email (không bắt buộc)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="guestCount">Số lượng người tham dự *</label>
+                    <select id="guestCount" class="form-input" required>
+                        <option value="">Chọn số lượng</option>
+                        <option value="1">1 người</option>
+                        <option value="2">2 người</option>
+                        <option value="3">3 người</option>
+                        <option value="4">4 người</option>
+                        <option value="5">5+ người</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="guestNote">Ghi chú / Lời chúc</label>
+                    <textarea id="guestNote" class="form-input" rows="3"
+                        placeholder="Lời chúc sinh nhật hoặc ghi chú đặc biệt..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn" style="flex: 1;">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" style="flex: 2;">
+                        <span id="submitText">Xác nhận tham gia</span>
+                        <span id="submitSpinner" class="spinner" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Canvas cho hiệu ứng pháo hoa -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // =============================================
+        // CẤU HÌNH CHÍNH - THAY ĐỔI URL TẠI ĐÂY
+        // =============================================
+        // URL Google Apps Script Web App của bạn
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzqdWoifSh-1DSTCACc_B-cHa4Z8Ztfm-l2uJFblzqJwG4sAg_gVe9S_D_b3jly8nks/exec';
+
+        // =============================================
+        // KHỞI TẠO ĐỒNG HỒ ĐẾM NGƯỢC
+        // =============================================
+        function initCountdown() {
+            const targetDate = new Date('December 26, 2025 16:00:00').getTime();
+            const countdownInterval = setInterval(updateCountdown, 1000);
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const timeLeft = targetDate - now;
+
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+                if (timeLeft < 0) {
+                    clearInterval(countdownInterval);
+                    document.querySelector('.countdown').innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 30px;">
+                            <h3 style="color: var(--gold); font-size: 2rem; margin-bottom: 10px;">🎉 Sự kiện đã bắt đầu! 🎉</h3>
+                            <p>Buổi tiệc đang diễn ra. Nếu bạn chưa đến, hãy nhanh chóng tham gia cùng chúng tôi!</p>
+                        </div>
+                    `;
+                }
+            }
+
+            updateCountdown();
+        }
+
+        // =============================================
+        // HÀM GỬI DỮ LIỆU LÊN GOOGLE SHEETS (CHUẨN)
+        // =============================================
+        async function saveToGoogleSheets(guestData) {
+            console.log('📤 Bắt đầu gửi dữ liệu đến Google Sheets...', guestData);
+
+            try {
+                // Chuẩn bị dữ liệu JSON
+                const payload = {
+                    name: guestData.name,
+                    phone: guestData.phone,
+                    email: guestData.email || '',
+                    guestCount: guestData.guestCount,
+                    note: guestData.note || '',
+                    timestamp: new Date().toISOString(),
+                    source: 'birthday-invitation-2025'
+                };
+
+                console.log('📦 Dữ liệu gửi đi:', payload);
+
+                // Gửi request với JSON
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors', // Sử dụng cors mode
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                console.log('📥 Phản hồi từ server:', response.status, response.statusText);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Kết quả từ Google Sheets:', result);
+                    return {
+                        success: true,
+                        message: result.message || 'Đã lưu thông tin thành công!',
+                        data: result
+                    };
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Lỗi từ server:', errorText);
+                    return {
+                        success: false,
+                        message: `Lỗi ${response.status}: ${response.statusText}`,
+                        error: errorText
+                    };
+                }
+
+            } catch (error) {
+                console.error('❌ Lỗi kết nối:', error);
+                return {
+                    success: false,
+                    message: 'Không thể kết nối đến Google Sheets. Vui lòng kiểm tra kết nối mạng.',
+                    error: error.toString()
+                };
+            }
+        }
+
+        // =============================================
+        // XỬ LÝ MODAL VÀ FORM
+        // =============================================
+        function initModal() {
+            const modal = document.getElementById('infoModal');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            const guestForm = document.getElementById('guestForm');
+
+            // Kiểm tra nếu đã xác nhận trước đó
+            const hasConfirmed = localStorage.getItem('birthdayConfirmed') === 'true';
+            if (hasConfirmed) {
+                updateConfirmButton(true);
+            }
+
+            // Mở modal khi click nút xác nhận
+            confirmBtn.addEventListener('click', function (e) {
+                console.log('🟢 Nút xác nhận được click');
+
+                if (hasConfirmed) {
+                    showNotification('Bạn đã xác nhận tham gia rồi!', 'info');
+                    return;
+                }
+
+                modal.classList.add('active');
+                document.getElementById('guestName').focus();
+            });
+
+            // Đóng modal
+            cancelBtn.addEventListener('click', function () {
+                console.log('🔴 Hủy bỏ form');
+                modal.classList.remove('active');
+                guestForm.reset();
+            });
+
+            // Đóng modal khi click bên ngoài
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    guestForm.reset();
+                }
+            });
+
+            // Xử lý submit form
+            guestForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                console.log('📝 Form submitted');
+
+                // Lấy thông tin từ form
+                const guestData = {
+                    name: document.getElementById('guestName').value.trim(),
+                    phone: document.getElementById('guestPhone').value.trim(),
+                    email: document.getElementById('guestEmail').value.trim(),
+                    guestCount: document.getElementById('guestCount').value,
+                    note: document.getElementById('guestNote').value.trim()
+                };
+
+                // Validate
+                if (!guestData.name) {
+                    showNotification("Vui lòng nhập họ và tên", "error");
+                    return;
+                }
+
+                if (!guestData.phone) {
+                    showNotification("Vui lòng nhập số điện thoại", "error");
+                    return;
+                }
+
+                if (!guestData.guestCount) {
+                    showNotification("Vui lòng chọn số lượng người tham dự", "error");
+                    return;
+                }
+
+                // Hiển thị loading
+                showLoading(true);
+
+                // Gửi dữ liệu lên Google Sheets
+                const result = await saveToGoogleSheets(guestData);
+
+                if (result.success) {
+                    // Lưu vào localStorage
+                    localStorage.setItem('birthdayConfirmed', 'true');
+                    localStorage.setItem('guestName', guestData.name);
+                    localStorage.setItem('guestData', JSON.stringify(guestData));
+
+                    // Đóng modal
+                    modal.classList.remove('active');
+                    guestForm.reset();
+
+                    // Cập nhật nút
+                    updateConfirmButton(true);
+
+                    // Kích hoạt pháo hoa
+                    launchConfetti();
+
+                    // Hiển thị thông báo
+                    showNotification(
+                        `Cảm ơn ${guestData.name} đã xác nhận tham gia! ${result.message}`,
+                        "success"
+                    );
+
+                    // Log thành công
+                    console.log('🎉 Xác nhận thành công!');
+                } else {
+                    // Thông báo lỗi
+                    showNotification(`Không thể lưu thông tin: ${result.message}`, "error");
+                    console.error('❌ Lỗi khi lưu thông tin:', result.error);
+                }
+
+                // Tắt loading
+                showLoading(false);
+            });
+
+            function showLoading(isLoading) {
+                if (isLoading) {
+                    submitText.style.display = 'none';
+                    submitSpinner.style.display = 'inline-block';
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner"></span> Đang gửi thông tin...';
+                } else {
+                    submitText.style.display = 'inline';
+                    submitSpinner.style.display = 'none';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span id="submitText">Xác nhận tham gia</span><span id="submitSpinner" class="spinner" style="display: none;"></span>';
+                }
+            }
+
+            function updateConfirmButton(confirmed) {
+                if (confirmed) {
+                    const savedName = localStorage.getItem('guestName') || '';
+                    const displayName = savedName ? savedName.split(' ')[0] : ''; // Lấy tên đầu
+                    confirmBtn.innerHTML = `
+                        <i class="fas fa-check-circle btn-icon"></i>
+                        ${displayName ? displayName + ' đã ' : ''}Xác nhận tham gia
+                    `;
+                    confirmBtn.classList.remove('btn-primary');
+                    confirmBtn.classList.add('btn-success');
+                    confirmBtn.disabled = true;
+                }
+            }
+        }
+
+        // =============================================
+        // HIỆU ỨNG PHÁO HOA
+        // =============================================
+        function launchConfetti() {
+            console.log('🎆 Bắn pháo hoa');
+
+            // Pháo hoa từ trung tâm
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#D4AF37', '#FFD700', '#FFFFFF', '#FFED4E']
+            });
+
+            // Pháo hoa từ hai bên
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    angle: 60,
+                    spread: 80,
+                    origin: { x: 0, y: 0.6 },
+                    colors: ['#D4AF37', '#FFD700', '#FFFFFF']
+                });
+            }, 150);
+
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    angle: 120,
+                    spread: 80,
+                    origin: { x: 1, y: 0.6 },
+                    colors: ['#D4AF37', '#FFD700', '#FFFFFF']
+                });
+            }, 300);
+
+            // Pháo hoa từ trên xuống
+            setTimeout(() => {
+                confetti({
+                    particleCount: 80,
+                    angle: 270,
+                    spread: 100,
+                    origin: { x: 0.5, y: 0 },
+                    colors: ['#D4AF37', '#FFD700', '#FFFFFF']
+                });
+            }, 450);
+        }
+
+        // =============================================
+        // XỬ LÝ CÁC NÚT TƯƠNG TÁC KHÁC
+        // =============================================
+        function initButtons() {
+            // Nút "Xem bản đồ"
+            const mapBtn = document.getElementById('mapBtn');
+
+            // Nút "Nhắn tin cho Tuấn"
+            const messageBtn = document.getElementById('messageBtn');
+
+            // Hiệu ứng hover cho các nút
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function () {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(-5px)';
+                    }
+                });
+
+                button.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        }
+
+        // =============================================
+        // HIỂN THỊ THÔNG BÁO
+        // =============================================
+        function showNotification(message, type = "success") {
+            console.log(`📢 Thông báo [${type}]:`, message);
+
+            // Xóa thông báo cũ nếu có
+            const oldNotifications = document.querySelectorAll('.custom-notification');
+            oldNotifications.forEach(note => note.remove());
+
+            const notification = document.createElement('div');
+            const iconClass = type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            const bgColor = type === 'success' ? 'linear-gradient(135deg, #28a745, #1e7e34)' :
+                type === 'error' ? 'linear-gradient(135deg, #dc3545, #c82333)' :
+                    'linear-gradient(135deg, var(--gold), var(--dark-gold))';
+
+            notification.className = 'custom-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${bgColor};
+                color: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-weight: 600;
+                transform: translateX(150%);
+                transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+                max-width: 400px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+            `;
+
+            notification.innerHTML = `
+                <i class="fas ${iconClass}" style="font-size: 1.3rem;"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Hiệu ứng hiện
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            // Tự động ẩn sau 5 giây
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 500);
+            }, 5000);
+
+            // Cho phép click để đóng sớm
+            notification.addEventListener('click', function () {
+                this.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    if (this.parentNode) {
+                        this.remove();
+                    }
+                }, 500);
+            });
+        }
+
+        // =============================================
+        // KIỂM TRA KẾT NỐI GOOGLE SCRIPT
+        // =============================================
+        async function testGoogleScriptConnection() {
+            console.log('🔗 Kiểm tra kết nối Google Script...');
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    const result = await response.text();
+                    console.log('✅ Kết nối Google Script OK:', result.substring(0, 100) + '...');
+                    return true;
+                } else {
+                    console.warn('⚠️ Google Script trả về lỗi:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Không thể kết nối đến Google Script:', error);
+                return false;
+            }
+        }
+
+        // =============================================
+        // KHỞI CHẠY TẤT CẢ CHỨC NĂNG
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🚀 Trang đã tải xong, khởi tạo...');
+
+            // Khởi tạo các chức năng
+            initCountdown();
+            initModal();
+            initButtons();
+
+            // Kiểm tra kết nối Google Script
+            testGoogleScriptConnection();
+
+            // Hiển thị thông báo chào mừng
+            setTimeout(() => {
+                if (localStorage.getItem('birthdayConfirmed') !== 'true') {
+                    showNotification('Chào mừng đến với buổi tiệc sinh nhật của Tuấn!', 'info');
+                }
+            }, 2000);
+
+            // Hiệu ứng cho card khi cuộn
+            window.addEventListener('scroll', function () {
+                const card = document.querySelector('.birthday-card');
+                if (card) {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * -0.2;
+                    card.style.transform = `translateY(${rate}px)`;
+                }
+            });
+
+            console.log('🎉 Thiệp mời sinh nhật đã sẵn sàng!');
+            console.log('📊 URL Google Script:', GOOGLE_SCRIPT_URL);
+        });
+
+        // Bắt lỗi toàn cục
+        window.addEventListener('error', function (e) {
+            console.error('🔥 Lỗi JavaScript:', e.error);
+            showNotification('Có lỗi xảy ra, vui lòng thử lại!', 'error');
+        });
+    </script>
+</body>
+
+</html>
